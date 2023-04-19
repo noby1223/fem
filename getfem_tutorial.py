@@ -153,10 +153,5 @@ mft.export_to_vtk("electric_potential.vtk", mft, V, "Electric potential")
 print("mayavi2 -d electric_potential.vtk -f WarpScalar -m Surface")
 
 
-
-
-mesh2 = pv.read('electric_potential.vtk')
+mesh2 = pv.read("electric_potential.vtk")
 mesh2.plot()
-
-
-
