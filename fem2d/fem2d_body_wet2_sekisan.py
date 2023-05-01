@@ -35,7 +35,7 @@ cvnb_p = m.nbcvs()- len(m.region(35)[0])
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
-for i in range(40):
+for i in range(10):
     print(str(i) + "ファイル目")
 
     # 有限要素法と積分法の定義 meshfemはmeshオブジェクトと求めたい次元の物理量
@@ -108,9 +108,9 @@ for i in range(40):
     V = md[i].variable("V")
 
     mf.export_to_vtk(
-        "fem_2d_wet_electric_potential" + str(i) + ".vtk", mf, V, "Electric potential"
+        "fem/fem2d/vtk/fem_2d_wet_electric_potential" + str(i) + ".vtk", mf, V, "Electric potential"
     )
-    pvvtk = pv.read("fem_2d_wet_electric_potential" + str(i) + ".vtk")
+    pvvtk = pv.read("fem/fem2d/vtk/fem_2d_wet_electric_potential" + str(i) + ".vtk")
 
     I_hairetu = post_2d.postprocess_2d(m, V, mf,conductivity,conductivity_wet)
     
