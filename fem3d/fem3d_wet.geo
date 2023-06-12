@@ -18,7 +18,7 @@ Surface Loop(6) = {1, 3, 5, 2, 4, 6};
 Surface Loop(7) = {12, 7, 9, 11, 8, 10};
 
 
-//+
+//+g
 Physical Surface("body", 37) = {8, 9, 12, 7, 11, 10};
 //+
 Physical Surface("tank", 38) = {1, 6, 3, 5, 2, 4};

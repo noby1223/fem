@@ -7,12 +7,12 @@ import pandas_3d as pd3
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/fem3d.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/fem3d_wahr.msh")
 
 
 bd1 = m.region(37)
-bd2 = m.region(38)
-bd3 = m.region(39)
+bd2 = m.region(39)
+bd3 = m.region(40)
 bd4 = m.region(9)
 
 TANK = 1
@@ -31,7 +31,7 @@ md = []
 cond_wet_mtm = []
 I_hai_mtm = []
 cvnb_a = m.nbcvs()#全領域の凸
-cvnb_p = m.nbcvs()- len(m.region(8)[0])#領域paintの凸
+cvnb_p = len(m.region(4)[0])#領域paintの凸
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
@@ -61,24 +61,24 @@ for i in range(5):
     conduct_wet = []
     md[i].add_fem_variable("V", mf)
 
-    for w in m.region(8)[0]:  # WET塗膜の凸毎にsetregionで設定していく
-        bdw.append([m.region(8)[0][wi], 65535])
-        WET.append(41 + wi)
+    for w in m.region(41)[0]:  # WET塗膜の凸毎にsetregionで設定していく
+        bdw.append([m.region(41)[0][wi], 65535])
+        WET.append(50 + wi)
         m.set_region(WET[wi], bdw[wi])
 
         if i == 0:
-            I_cd = 57000000
+            cv_cd = 57000000
 
         else:
             if 10000000 / np.linalg.norm(I_sekisan[w]) ** 1.5 > 57000000:
-                I_cd = 57000000
+                cv_cd = 57000000
 
             else:
-                I_cd = 10000000 / np.linalg.norm(I_sekisan[w]) ** 1.5
+                cv_cd = 10000000 / np.linalg.norm(I_sekisan[w]) ** 1.5
 
-        conductivity_wet.append(I_cd)
+        conductivity_wet.append(cv_cd)
         conduct_wet.append("cond_wet" + str(wi))
-
+ 
         md[i].add_initialized_data(conduct_wet[wi], [conductivity_wet[wi]])
         md[i].add_linear_term(mim, conduct_wet[wi] + "*(Grad_V.Grad_Test_V)", WET[wi])
 
@@ -103,7 +103,7 @@ for i in range(5):
 
     
 
-    md[i].solve("noisy")  # noisyｿﾙﾊﾞ進行状況　res目標残差値　iter最大反復回数
+    md[i].solve()  # noisyｿﾙﾊﾞ進行状況　res目標残差値　iter最大反復回数
 
     V = md[i].variable("V")
 
