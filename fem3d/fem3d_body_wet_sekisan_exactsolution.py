@@ -7,23 +7,27 @@ import pandas_3d as pd3
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/fem3d_wahr_wet.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/exact_solution_3d.msh")
 
+#　リージョン　region 7 全体の領域　region 3  wet領域
 
-bd1 = m.region(37)
-bd2 = m.region(39)
-bd3 = m.region(14)
-bd4 = m.region(5)
+rp = m.region(7)
 
-TANK = 1
+reg = m.region(3)[0]
+rp2 = np.delete(rp,reg,1)
+
+bd2 = m.region(4)#39
+bd3 = m.region(3)#14
+bd4 = rp2#5
+
 ANODE = 2
-WET_SURFACE = 3
+BODY = 3
 PAINT = 4
 
-m.set_region(TANK, bd1)
 m.set_region(ANODE, bd2)
-m.set_region(WET_SURFACE, bd3)
+m.set_region(BODY, bd3)
 m.set_region(PAINT, bd4)
+
 
 I_sekisan = []
 I_hairetu_each = []
@@ -31,7 +35,7 @@ md = []
 cond_wet_mtm = []
 I_hai_mtm = []
 cvnb_a = m.nbcvs()#全領域の凸
-cvnb_p = len(m.region(5)[0])#領域paintの凸
+cvnb_p = len(rp[0])#領域paintの凸
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
@@ -60,7 +64,7 @@ for i in range(5):
     conduct_wet = []
     md[i].add_fem_variable("V", mf)
 
-    for w in m.region(15)[0]:  # WET塗膜の凸毎にsetregionで領域とconductibityを設定していく
+    for w in m.region(3)[0]:  # WET塗膜の凸毎にsetregionで領域とconductibityを設定していく
         bdw.append([w, 65535])
         WET.append(50 + wi)
         m.set_region(WET[wi], bdw[wi])
@@ -69,11 +73,11 @@ for i in range(5):
             cv_cd = 0.1 #1000μS/cm　がﾒｰﾄﾙ換算で0.1S/ｍかなと
 
         else:
-            if 0.1 / np.linalg.norm(I_sekisan[w]) **0.5  > 0.1:
+            if 0.1 / np.linalg.norm(I_sekisan[w])/10 **0.5  > 0.1:
                 cv_cd = 0.1
 
             else:
-                cv_cd = 0.1 / np.linalg.norm(I_sekisan[w]) **0.5
+                cv_cd = 0.1 / np.linalg.norm(I_sekisan[w])/10 **0.5
 
         conductivity_wet.append(cv_cd)
         conduct_wet.append("cond_wet" + str(wi))
@@ -92,7 +96,7 @@ for i in range(5):
 
     md[i].add_initialized_data("DdataV_b", [0])
     md[i].add_Dirichlet_condition_with_multipliers(
-        mim, "V", elements_degree - 1, WET_SURFACE, "DdataV_b"
+        mim, "V", elements_degree - 1, BODY , "DdataV_b"
     )
     md[i].add_initialized_data("DdataV_a", [500])
     md[i].add_Dirichlet_condition_with_multipliers(
@@ -120,7 +124,7 @@ for i in range(5):
             I_sekisan[y] += I_hairetu[y]
 
 
-    pd3.excel_3d(i,m,mf, I_sekisan, I_hairetu)
+    pd3.excel_3d_exact(i,m,mf, I_sekisan, I_hairetu,WET)
 
     cond_wet_m = [0.1]*cvnb_p
     cond_wet_mt = cond_wet_m + conductivity_wet   
@@ -131,7 +135,7 @@ for i in range(5):
 
 
 #電導度と電流の積算値をエクセルに出力するう！
-pd3.excel_3d_matome(cond_wet_mtm,I_hai_mtm)
+pd3.excel_3d_matome_exact(cond_wet_mtm,I_hai_mtm)
 
 
 # #ここから電流を表示するプロットをpyvistaで書いてみよう
