@@ -3,6 +3,7 @@ import pyvista as pv
 import postprocess_3d as post_3d
 import numpy as np
 import pandas_3d as pd3
+import conductibity as cond
 
 elements_degree = 1
 
@@ -32,6 +33,7 @@ cond_wet_mtm = []
 I_hai_mtm = []
 cvnb_a = m.nbcvs()#全領域の凸
 cvnb_p = len(m.region(5)[0])#領域paintの凸
+cond_coeffi = cond.cond_coeffi(m)
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
