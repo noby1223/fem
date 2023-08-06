@@ -8,7 +8,7 @@ import conductibity as cond
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/fem3d_wahr_wet.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/FEM_4枚BOX2 wet.msh")
 
 
 bd1 = m.region(37)
@@ -106,11 +106,11 @@ for i in range(5):
     md[i].solve()  # noisyｿﾙﾊﾞ進行状況　res目標残差値　iter最大反復回数
 
     V = md[i].variable("V")
-
+    print("mf")
     mf.export_to_vtk(
-        "fem/fem3d/vtk/fem_3d_wet_electric_potential" + str(i) + ".vtk", mf, V, "Electric potential"
+        "fem/fem3d/vtk/fem_3d_wet_electric_potential" + str(i) , "ascii", V, "Electric potential"
     )
-    pvvtk = pv.read("fem/fem3d/vtk/fem_3d_wet_electric_potential" + str(i) + ".vtk")
+    #pvvtk = pv.read("fem/fem3d/vtk/fem_3d_wet_electric_potential" + str(i) + ".vtk")
 
     I_hairetu = post_3d.postprocess_3d(m, V, mf,conductivity,conductivity_wet)
     

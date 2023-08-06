@@ -35,7 +35,7 @@ cvnb_p = m.nbcvs()- len(m.region(35)[0])
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
-for i in range(10):
+for i in range(40):
     print(str(i) + "ファイル目")
 
     # 有限要素法と積分法の定義 meshfemはmeshオブジェクトと求めたい次元の物理量
