@@ -5,7 +5,7 @@ import pandas_3d as pd3
 import wet_conductibity as w_cond
 import msh_mf_point as msh_mf
 import add_region as add_re
-import os
+
 
 # from memory_profiler import profile　　　　　#メモリ診断用
 # @profile()
@@ -16,7 +16,7 @@ import os
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/FEM__4枚BOX2Φ穴なしregionmainasu_wet.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/4枚BOX/FEM__4枚BOX2Φ穴なしregionmainasu_wet.msh")
 
 
 
@@ -49,6 +49,7 @@ I_hairetu_each = []
 md = []
 cond_wet_mtm = []
 I_hai_mtm = []
+I_seki_mtm = []
 V_matome = []
 #cvnb_a = m.nbcvs()#全領域の凸
 #cvnb_p = len(m.region(12)[0])#領域paintの凸
@@ -56,7 +57,7 @@ V_matome = []
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
-for i in range(10):
+for i in range(180):
     print(str(i) + "ファイル目")
 
     # 有限要素法と積分法の定義 meshfemはmeshオブジェクトと求めたい次元の物理量
@@ -69,7 +70,7 @@ for i in range(10):
 
     md.append(gf.Model("real"))
     # 実数と複素数で実数を選択
-    conductivity = 0.1
+    conductivity = 150
     conduct = "cond"
 
 
@@ -84,7 +85,7 @@ for i in range(10):
     #i==0 以外は塗膜抵抗を計算していく
     if i == 0 : 
         #if not os.path.exists('/home/noby/fem/fem3d/m_mf_point/cond_test.bin'):
-        conductivity_wet = [0.1]*len(bd_ws[0]) #1000μS/cm　がﾒｰﾄﾙ換算で0.1S/ｍかなと
+        conductivity_wet = [100]*len(bd_ws[0]) #1000μS/cm　がﾒｰﾄﾙ換算で100S/ｍかなと
 
             
     else:
@@ -126,7 +127,7 @@ for i in range(10):
 
     V = md[i].variable("V")
     mf.export_to_vtk(
-        "fem/fem3d/vtk/fem_3d_wet_electric_potential_4box" + str(i) +'.vtk' , "ascii", V, "Electric potential"
+        "fem/fem3d/vtk/4box/fem_3d_wet_electric_potential_4box_ver2_" + str(i) +'.vtk' , "ascii", V, "Electric potential"
     )
 
 
@@ -137,7 +138,7 @@ for i in range(10):
     
 
 
-    I_hairetu = post_3d.postprocess_3d(m, V, conductivity,  bd_wsf1, pts_junban,conductivity_wet)
+    I_hairetu = post_3d.postprocess_3d(m, V, conductivity,  bd_wsf1, pts_junban,conductivity_wet,i)
     area_hairetu = I_hairetu[1]
     I_hairetu = I_hairetu[0]
     
@@ -154,6 +155,9 @@ for i in range(10):
    
     if i != 0 :cond_wet_mtm.append(conductivity_wet)
     I_hai_mtm.append(I_hairetu)
+    I_s_m = I_sekisan.copy()# = 演算はオブジェクトのコピーではなく参照をするのでcopyメソッドを使わなあかんようだ
+    I_seki_mtm.append(I_s_m)
+
     V_matome.append(V)
     md[i] = []   #ここでmd[i]を消しておかないとメモリの消費量が激増してしまう
     mf = []
@@ -161,7 +165,7 @@ for i in range(10):
 
 
 #電導度と電流の積算値をエクセルに出力するう！
-pd3.excel_3d_matome(cond_wet_mtm,I_hai_mtm,V_matome,area_hairetu)
+pd3.excel_3d_matome(cond_wet_mtm,I_hai_mtm,V_matome,area_hairetu,I_seki_mtm,bd2)
 
 
 
