@@ -1,5 +1,5 @@
 import getfem as gf
-import postprocess_3d_ver3 as post_3d
+import dennryuu_keisan_kakunin_231005 as post_3d
 import numpy as np
 import pandas_3d as pd3
 import wet_conductibity as w_cond
@@ -16,7 +16,7 @@ import add_region as add_re
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/4枚BOX/FEM__4枚BOX2Φ穴なしregionmainasu_wet.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/4box/msh_geo/FEM__4枚BOX2Φ穴なしregionmainasu_wet.msh")
 
 
 
@@ -70,7 +70,7 @@ for i in range(180):
 
     md.append(gf.Model("real"))
     # 実数と複素数で実数を選択
-    conductivity = 150
+    conductivity = 100#ms/m
     conduct = "cond"
 
 
@@ -85,11 +85,11 @@ for i in range(180):
     #i==0 以外は塗膜抵抗を計算していく
     if i == 0 : 
         #if not os.path.exists('/home/noby/fem/fem3d/m_mf_point/cond_test.bin'):
-        conductivity_wet = [100]*len(bd_ws[0]) #1000μS/cm　がﾒｰﾄﾙ換算で100S/ｍかなと
+        conductivity_wet = [conductivity]*len(bd_ws[0]) #1000μS/cm　がﾒｰﾄﾙ換算で100mS/ｍかなと
 
             
     else:
-        conductivity_wet = w_cond.wet_conduct(I_sekisan,bd2,area_hairetu)
+        conductivity_wet = w_cond.wet_conduct(I_sekisan,bd2,area_hairetu,i)
         
 
     for k in bd_ws[0]:  # WET塗膜の凸毎にsetregionで領域とconductibityを設定していく
@@ -116,7 +116,7 @@ for i in range(180):
     md[i].add_Dirichlet_condition_with_multipliers(
             mim, "V", elements_degree - 1, BODY_SURFACE, "DdataV_b"
         )
-    md[i].add_initialized_data("DdataV_a", [100])
+    md[i].add_initialized_data("DdataV_a", [150])
     md[i].add_Dirichlet_condition_with_multipliers(
         mim, "V", elements_degree - 1, ANODE, "DdataV_a"
     )  # 変数 varname とメッシュ領域 region にDirichlet条件を追加します．
@@ -127,7 +127,7 @@ for i in range(180):
 
     V = md[i].variable("V")
     mf.export_to_vtk(
-        "fem/fem3d/vtk/4box/fem_3d_wet_electric_potential_4box_ver2_" + str(i) +'.vtk' , "ascii", V, "Electric potential"
+        "fem/fem3d/4box/vtk/fem_3d_wet_electric_potential_4box_ver2_" + str(i) +'.vtk' , "ascii", V, "Electric potential"
     )
 
 

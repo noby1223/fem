@@ -1,5 +1,4 @@
 import getfem as gf
-import pyvista as pv
 import postprocess_3d as post_3d
 import numpy as np
 import pandas_3d as pd3
@@ -7,7 +6,7 @@ import pandas_3d as pd3
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/msh_geo/exact_solution_3d.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/exact_solution/msh_geo/exact_solution_3d.msh")
 
 #　リージョン　region 7 全体の領域　region 3  wet領域
 
@@ -110,9 +109,9 @@ for i in range(5):
     V = md[i].variable("V")
 
     mf.export_to_vtk(
-        "fem/fem3d/vtk/fem_3d_wet_electric_potential" + str(i) + ".vtk", mf, V, "Electric potential"
+        "fem/fem3d/exact_solution/vtk/fem_3d_wet_electric_potential" + str(i) + ".vtk", mf, V, "Electric potential"
     )
-    pvvtk = pv.read("fem/fem3d/vtk/fem_3d_wet_electric_potential" + str(i) + ".vtk")
+    
 
     I_hairetu = post_3d.postprocess_3d(m, V, mf,conductivity,conductivity_wet)
     
