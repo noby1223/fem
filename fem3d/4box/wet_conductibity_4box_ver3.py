@@ -10,12 +10,12 @@ def wet_conduct(I_sekisan,  bd_ws  , bd2,area_b_hairetu,  area_p_hairetu   ,m  ,
 
     I_sekisan_w = np.delete(I_sekisan,slice(0,len(bd2[0])))
 
-    df = pd.read_excel('/home/noby/fem/fem3d/4box/resistance_data/231031/6回目WET電導度計算用20231031_250V_ソフトS_PVC容器＿300s_攪拌なし.xlsx')
+    df = pd.read_excel('/home/noby/fem/fem3d/4box/resistance_data/2回目WET電導度計算用20240208_150V_ソフトS_PVC容器＿300s_攪拌なし.xlsx')
     data_sekisan = df['積算電流A/mm']#70mm*70mm 単位はmA/㎟
     data_sekisan[0] = 0#何も入れないとnanなので
     resi = df['電導度換算（厚さ0.1ミリ）']
 
-    df2 = pd.read_excel('/home/noby/fem/fem3d/4box/resistance_data/231031/6回目WET電導度計算用20231031_250V_ソフトS_PVC容器＿300s_攪拌なし.xlsx')
+    df2 = pd.read_excel('/home/noby/fem/fem3d/4box/resistance_data/2回目WET電導度計算用20240208_150V_ソフトS_PVC容器＿300s_攪拌なし.xlsx')
     data_sekisan2 = df2['積算電流A/mm']#70mm*70mm 単位はmA/㎟
     data_sekisan2[0] = 0#何も入れないとnanなので
     resi2 = df2['電導度換算（厚さ0.1ミリ）']
@@ -31,6 +31,7 @@ def wet_conduct(I_sekisan,  bd_ws  , bd2,area_b_hairetu,  area_p_hairetu   ,m  ,
         
 
         #ここで電導度を補正するための計算をしておく。
+        #現在はWET凸の厚さを0.2㎜としているので0.1mm時と比べて電導度を2倍にしておく必要がある
         #body側の面積＋paint側の面積÷２×0.1㎜　：　wet凸の体積　の比率をconductibityのそれぞれ乗じる
         propotion = m.convex_area(bd_ws[0][i])  /  ((area_b_hairetu[i] + area_p_hairetu[i])/2 *0.1) 
         propotion = propotion[0]

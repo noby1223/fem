@@ -48,8 +48,8 @@ m.set_region(WET_SURFACE, bd_wsf2)
 
 
 voltage = 0
-applied_v = 160#印加電圧
-syouatu = 30#昇圧時間
+applied_v = 150#印加電圧
+syouatu = 150#昇圧時間
 increase_v = applied_v/syouatu
 
 
@@ -67,7 +67,7 @@ V_matome = []
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
-for i in range(200):
+for i in range(299):
 
 
     if i <= syouatu :voltage += increase_v

@@ -1,5 +1,5 @@
 import getfem as gf
-import postprocess_3d_ver3 as post_3d
+import postprocess_3d_ver3_ampere_chousei as post_3d
 import pandas_3d as pd3
 import wet_conductibity_4box_ver3 as w_cond
 import msh_mf_point as msh_mf
@@ -16,14 +16,14 @@ import add_region as add_re
 elements_degree = 1
 
 
-m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/4box/msh_geo/FEM__4枚BOX2Φ穴なしregionmainasu_wet.msh")
+m = gf.Mesh("import", "gmsh", "/home/noby/fem/fem3d/4box/msh_geo/FEM__4枚BOX2Φ穴なし連続ライン_ワーク境界のメッシュのみ細かく240319")
 
 
 r_p = paint_region = 12
 
 bd1 = m.region(90)#電極のregion
 bd2 = m.region(r_p)#paintのregionを追加
-bd_ws,bd_wsf1,bd_wsf2,ws,reg1,reg2,region_w = add_re.addregion(m)
+bd_ws,bd_wsf1,bd_wsf2,ws,reg1_all,reg2,region_w = add_re.addregion(m)
 #bd_wsはウェットの凸
 #bd_wsf1　wetの面region(0v側)を追加していくよ
 #bd_wsf2　wetの面region(0vじゃない側)を追加していくよ
@@ -45,7 +45,7 @@ m.set_region(WET_SURFACE, bd_wsf2)
 
 
 voltage = 0
-applied_v = 250#印加電圧
+applied_v = 240#印加電圧
 syouatu = 30#昇圧時間
 increase_v = applied_v/syouatu
 
@@ -64,7 +64,7 @@ V_matome = []
 
 # 時間軸にそって複数のファイルを作成するための繰り返し処理はここかやってみるよ
 
-for i in range(210):
+for i in range(240):
     print(str(i) + "ファイル目")
 
 
@@ -151,7 +151,7 @@ for i in range(210):
     
 
 
-    I_hairetu = post_3d.postprocess_3d(m, V, conductivity, bd_wsf1, bd_wsf2, pts_junban,conductivity_wet,bd2  , i)
+    I_hairetu = post_3d.postprocess_3d(m, V, conductivity, bd_wsf1, bd_wsf2, pts_junban,conductivity_wet,bd2  , i , reg1_all)
     
     area_b_hairetu = I_hairetu[1]
     area_p_hairetu = I_hairetu[2]

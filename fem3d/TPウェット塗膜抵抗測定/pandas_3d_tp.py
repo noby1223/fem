@@ -212,3 +212,35 @@ def excel_3d_matome(cond_wet_mtm,I_hai_mtm,V_matome,area_hairetu,I_seki_mtm,bd2,
     df5.to_csv(fp5) 
 
 
+
+
+    #6 面積あたりの各凸電流のまとめ
+   
+    fp6 = name2 + 'I_each_per_mm2.csv'#cvのファイルを作成
+
+    I_hai_mtm = np.delete(I_hai_mtm,slice(0,len(bd2[0])),axis = 1)
+    I_np = np.array(I_hai_mtm) 
+    I_hai_area_mtm = I_np/area_hairetu/1000000#area_haiが㎡なのでミリ㎡になおす【1,000,000）で除する。np.arrayでないとそのまま割算できない
+
+
+
+    if os.path.isfile(fp6):
+        os.remove(fp6)
+        f6 = open(fp6, 'w')
+        f6.write('')
+
+    else:
+        
+        f6 = open(fp6, 'w')
+        f6.write('')
+
+    data6 = I_hai_area_mtm
+    data6 = np.insert( data6, 0, bd_ws[0], axis = 0)
+    data6 = np.insert( data6, 0, region_w, axis = 0)
+    df6 = pd.DataFrame(
+           data6 
+    ).T
+   
+
+    
+    df6.to_csv(fp6) 
